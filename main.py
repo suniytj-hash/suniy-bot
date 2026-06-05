@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SUNIY TJ ACADEMY — Telegram Bot v4
+SUNIY TJ ACADEMY — Telegram Bot v5
 """
 
 import logging
@@ -17,16 +17,21 @@ from telegram.ext import (
 logging.basicConfig(level=logging.INFO)
 
 BOT_TOKEN = "8522249623:AAEhdVX6xsvAZDluEhCogWslU8D8hs1oTqg"  # ⚠️ Замените на новый токен!
+ADMIN_ID = 8329841937  # Только вы видите статистику
+
+# База данных пользователей (в памяти)
+users = set()
 
 WELCOME = """👋 Хуш омадед ба SUNIY TJ ACADEMY!
 
 🚀 Курси зеҳни сунъӣ аз 0 то натиҷа танҳо бо телефон.
 
 📚 Зиёда аз 20 дарс
-🎓 Зиёда аз 100 шогирд
-📱 Сурат • Видео • Реклама • Мини сериал
+🎓 Зиёда аз 100 шогирд омӯзиш гирифтанд
+📱 Сурат • Видео • Реклама
+• Ивази чеҳра • Мини сериал
 
-👇 Лутфан бахши лозимаро интихоб намоед."""
+👇 Барои гирифтани маълумоти пурра яке аз бахшҳоро интихоб намоед..."""
 
 ABOUT = """🚀 КУРСИ ЗЕҲНИ СУНЪӢ | SUNIY TJ ACADEMY
 
@@ -203,15 +208,29 @@ VIP = """👑 ТАРИФИ VIP — 549 СОМОНӢ
 
 BUY = """💳 ХАРИДИ КУРС
 
-Лутфан тарифи лозимаро интихоб намоед:
-
 🥉 STANDARD — 249 сомонӣ
-👑 VIP — 549 сомонӣ
+
+✅ Ҳамаи дарсҳо
+✅ Дастрасии доимӣ
+✅ Навсозиҳои курс
 
 ━━━━━━━━━━━━━━
 
-Пас аз интихоб ба шумо рақами корт барои пардохт фиристода мешавад.
-📩 Пас аз пардохт чек ё скриншоти пардохтро ирсол намоед.
+👑 VIP — 549 сомонӣ
+
+✅ Ҳамаи дарсҳо
+✅ Дастрасии доимӣ
+✅ Навсозиҳои курс
+✅ Кӯмаки шахсӣ
+✅ Ҷавоб ба саволҳо
+✅ Машварат
+
+━━━━━━━━━━━━━━
+
+📩 Пас аз интихоб рақами корт барои пардохт фиристода мешавад.
+
+📸 Пас аз пардохт чек ё скриншоти пардохтро ирсол намоед.
+
 ✅ Баъди тасдиқи пардохт дастрасӣ ба курс дода мешавад."""
 
 PAYMENT_STANDARD = """💳 ПАРДОХТИ STANDARD — 249 сомонӣ
@@ -284,8 +303,8 @@ def main_menu():
         [InlineKeyboardButton("🎓 Дар бораи курс", callback_data="about")],
         [InlineKeyboardButton("📚 Барномаи курс", callback_data="program")],
         [InlineKeyboardButton("🎬 Натиҷаҳо ва мисолҳо", callback_data="results")],
-        [InlineKeyboardButton("⭐ Фикри шогирдон", callback_data="reviews")],
         [InlineKeyboardButton("💰 Тарифҳо", callback_data="tariffs")],
+        [InlineKeyboardButton("⭐ Фикри шогирдон", callback_data="reviews")],
         [InlineKeyboardButton("💳 Харид кардан", callback_data="buy")],
         [InlineKeyboardButton("📞 Тамос бо маъмур", callback_data="contact")],
     ])
@@ -350,7 +369,14 @@ def pay_menu(back):
 # ===================== ХЕНДЛЕРЫ =====================
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    users.add(user_id)
     await update.message.reply_text(WELCOME, reply_markup=main_menu())
+
+async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ADMIN_ID:
+        return
+    await update.message.reply_text(f"👥 Ҷамъи корбарон: {len(users)} нафар")
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -381,6 +407,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             pass
 
 async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    users.add(user_id)
     await update.message.reply_text(WELCOME, reply_markup=main_menu())
 
 # ===================== ЗАПУСК =====================
@@ -388,6 +416,7 @@ async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main():
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("stats", stats))
     app.add_handler(CallbackQueryHandler(button_handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, unknown))
     print("✅ Бот SUNIY TJ ACADEMY запущен!")
