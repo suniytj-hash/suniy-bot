@@ -194,10 +194,10 @@ VIP = """👑 ТАРИФИ VIP — 549 СОМОНӢ
 
 🎁 БОНУСҲО
 
-🎁 1 МОҲ ChatGPT РОЙГОН
-🎁 1 МОҲ СОХТАНИ ВИДЕО РОЙГОН
 🎁 Промптҳои тайёр
+🎁 Маводҳои иловагӣ
 🎁 Навсозиҳои ояндаи курс
+🎁 Дастрасӣ ба гурӯҳи VIP
 
 ━━━━━━━━━━━━━━
 
@@ -296,6 +296,15 @@ CONTACT = """📞 ТАМОС БО МО
 
 ⚡ Одатан дар муддати кӯтоҳ ҷавоб медиҳем."""
 
+
+VPN = """🇹🇯 VPN-и ватанӣ
+
+⚡️ Тез, устувор ва қулай барои истифода.
+
+👇 Барои фаъол кардани VPN ба линкаи зер ворид шавед:
+
+🔗 https://t.me/WebSafeTelbot?start=ref_ODMyOTg0MTkzNy4wDly57ogZbQ"""
+
 # ===================== КЛАВИАТУРЫ =====================
 
 def main_menu():
@@ -306,6 +315,7 @@ def main_menu():
         [InlineKeyboardButton("💰 Тарифҳо", callback_data="tariffs")],
         [InlineKeyboardButton("⭐ Фикри шогирдон", callback_data="reviews")],
         [InlineKeyboardButton("💳 Харид кардан", callback_data="buy")],
+        [InlineKeyboardButton("🇹🇯 VPN", callback_data="vpn")],
         [InlineKeyboardButton("📞 Тамос бо маъмур", callback_data="contact")],
     ])
 
@@ -396,6 +406,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "pay_standard": (PAYMENT_STANDARD, pay_menu("standard")),
         "pay_vip": (PAYMENT_VIP, pay_menu("vip")),
         "contact": (CONTACT, contact_menu()),
+        "vpn": (VPN, back_menu()),
     }
 
     if data in texts:
