@@ -27,7 +27,7 @@ WELCOME = """👋 Хуш омадед ба SUNIY TJ ACADEMY!
 🚀 Курси зеҳни сунъӣ аз 0 то натиҷа танҳо бо телефон.
 
 📚 Зиёда аз 20 дарс
-🎓 Зиёда аз 100 шогирд омӯзиш гирифтанд
+🎓 Зиёда аз 100 нафар омӯзиш гирифтанд
 📱 Сурат • Видео • Реклама
 • Ивази чеҳра • Мини сериал
 
@@ -310,12 +310,12 @@ VPN = """🇹🇯 VPN-и ватанӣ
 def main_menu():
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("🎓 Дар бораи курс", callback_data="about")],
+        [InlineKeyboardButton("💰 Тарифҳо", callback_data="tariffs")],
         [InlineKeyboardButton("📚 Барномаи курс", callback_data="program")],
         [InlineKeyboardButton("🎬 Натиҷаҳо ва мисолҳо", callback_data="results")],
-        [InlineKeyboardButton("💰 Тарифҳо", callback_data="tariffs")],
         [InlineKeyboardButton("⭐ Фикри шогирдон", callback_data="reviews")],
-        [InlineKeyboardButton("💳 Харид кардан", callback_data="buy")],
-        [InlineKeyboardButton("🇹🇯 VPN", callback_data="vpn")],
+        [InlineKeyboardButton("🧾 Харид кардан", callback_data="buy")],
+        [InlineKeyboardButton("🇹🇯 VPN-и ватанӣ", callback_data="vpn")],
         [InlineKeyboardButton("📞 Тамос бо маъмур", callback_data="contact")],
     ])
 
