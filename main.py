@@ -19,8 +19,35 @@ logging.basicConfig(level=logging.INFO)
 BOT_TOKEN = "8522249623:AAEhdVX6xsvAZDluEhCogWslU8D8hs1oTqg"  # ⚠️ Замените на новый токен!
 ADMIN_ID = 8329841937  # Только вы видите статистику
 
-# База данных пользователей (в памяти)
-users = set()
+import sqlite3
+import os
+
+# База данных SQLite
+DB_PATH = "users.db"
+
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY)")
+    conn.commit()
+    conn.close()
+
+def add_user(user_id):
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("INSERT OR IGNORE INTO users (user_id) VALUES (?)", (user_id,))
+    conn.commit()
+    conn.close()
+
+def get_all_users():
+    conn = sqlite3.connect(DB_PATH)
+    rows = conn.execute("SELECT user_id FROM users").fetchall()
+    conn.close()
+    return [row[0] for row in rows]
+
+def get_user_count():
+    conn = sqlite3.connect(DB_PATH)
+    count = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
+    conn.close()
+    return count
 
 WELCOME = """👋 Хуш омадед ба SUNIY TJ ACADEMY!
 
@@ -380,13 +407,13 @@ def pay_menu(back):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    users.add(user_id)
+    add_user(user_id)
     await update.message.reply_text(WELCOME, reply_markup=main_menu())
 
 async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
         return
-    await update.message.reply_text(f"👥 Ҷамъи корбарон: {len(users)} нафар")
+    await update.message.reply_text(f"👥 Ҷамъи корбарон: {get_user_count()} нафар")
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -427,7 +454,7 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = " ".join(context.args)
     success = 0
     fail = 0
-    for user_id in users:
+    for user_id in get_all_users():
         try:
             await context.bot.send_message(chat_id=user_id, text=text)
             success += 1
@@ -437,12 +464,13 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    users.add(user_id)
+    add_user(user_id)
     await update.message.reply_text(WELCOME, reply_markup=main_menu())
 
 # ===================== ЗАПУСК =====================
 
 def main():
+    init_db()
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("stats", stats))
