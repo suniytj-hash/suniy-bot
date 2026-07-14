@@ -417,6 +417,24 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         except Exception:
             pass
 
+
+async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ADMIN_ID:
+        return
+    if not context.args:
+        await update.message.reply_text("❌ Напишите текст! Пример:\n/broadcast Ваш текст")
+        return
+    text = " ".join(context.args)
+    success = 0
+    fail = 0
+    for user_id in users:
+        try:
+            await context.bot.send_message(chat_id=user_id, text=text)
+            success += 1
+        except Exception:
+            fail += 1
+    await update.message.reply_text(f"✅ Отправлено: {success} нафар\n❌ Не доставлено: {fail} нафар")
+
 async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     users.add(user_id)
@@ -428,6 +446,7 @@ def main():
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("stats", stats))
+    app.add_handler(CommandHandler("broadcast", broadcast))
     app.add_handler(CallbackQueryHandler(button_handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, unknown))
     print("✅ Бот SUNIY TJ ACADEMY запущен!")
