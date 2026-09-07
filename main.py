@@ -174,10 +174,10 @@ TARIFFS = """💰 ТАРИФҲО
 
 Лутфан тарифи лозимаро интихоб намоед:
 
-🥉 STANDARD — 249 сомонӣ
-👑 VIP — 549 сомонӣ"""
+🥉 STANDARD — 199 сомонӣ
+👑 VIP — 399 сомонӣ"""
 
-STANDARD = """🥉 ТАРИФИ STANDARD — 249 СОМОНӢ
+STANDARD = """🥉 ТАРИФИ STANDARD — 199 СОМОНӢ
 
 Ба тариф дохил мешавад:
 
@@ -196,11 +196,11 @@ STANDARD = """🥉 ТАРИФИ STANDARD — 249 СОМОНӢ
 
 ━━━━━━━━━━━━━━
 
-💰 Нарх: 249 сомонӣ
+💰 Нарх: 399 сомонӣ
 📚 Дастрасии доимӣ ба курс
 📱 Дарсҳо онлайн дар Telegram"""
 
-VIP = """👑 ТАРИФИ VIP — 549 СОМОНӢ
+VIP = """👑 ТАРИФИ VIP — 399 СОМОНӢ
 
 Ба тариф дохил мешавад:
 
@@ -228,14 +228,14 @@ VIP = """👑 ТАРИФИ VIP — 549 СОМОНӢ
 
 ━━━━━━━━━━━━━━
 
-💰 Нарх: 549 сомонӣ
+💰 Нарх: 399 сомонӣ
 📚 Дастрасии доимӣ ба курс
 📱 Дарсҳо онлайн дар Telegram
 👨‍💻 Дастгирии шахсӣ аз ҷониби маъмур"""
 
 BUY = """💳 ХАРИДИ КУРС
 
-🥉 STANDARD — 249 сомонӣ
+🥉 STANDARD — 199 сомонӣ
 
 ✅ Ҳамаи дарсҳо
 ✅ Дастрасии доимӣ
@@ -243,7 +243,7 @@ BUY = """💳 ХАРИДИ КУРС
 
 ━━━━━━━━━━━━━━
 
-👑 VIP — 549 сомонӣ
+👑 VIP — 399 сомонӣ
 
 ✅ Ҳамаи дарсҳо
 ✅ Дастрасии доимӣ
@@ -353,15 +353,15 @@ def back_menu():
 
 def tariffs_menu():
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🥉 STANDARD — 249 сомонӣ", callback_data="standard")],
-        [InlineKeyboardButton("👑 VIP — 549 сомонӣ", callback_data="vip")],
+        [InlineKeyboardButton("🥉 STANDARD — 199 сомонӣ", callback_data="standard")],
+        [InlineKeyboardButton("👑 VIP — 399 сомонӣ", callback_data="vip")],
         [InlineKeyboardButton("⬅️ Бозгашт", callback_data="menu")],
     ])
 
 def buy_menu():
     return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🥉 STANDARD — 249 сомонӣ", callback_data="pay_standard")],
-        [InlineKeyboardButton("👑 VIP — 549 сомонӣ", callback_data="pay_vip")],
+        [InlineKeyboardButton("🥉 STANDARD —199 сомонӣ", callback_data="pay_standard")],
+        [InlineKeyboardButton("👑 VIP — 399 сомонӣ", callback_data="pay_vip")],
         [InlineKeyboardButton("⬅️ Бозгашт", callback_data="menu")],
     ])
 
