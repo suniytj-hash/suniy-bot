@@ -16,7 +16,7 @@ from telegram.ext import (
 
 logging.basicConfig(level=logging.INFO)
 
-BOT_TOKEN = "8522249623:AAEhdVX6xsvAZDluEhCogWslU8D8hs1oTqg"  # ⚠️ Замените на новый токен!
+BOT_TOKEN = "8522249623:AAHqyguw7qnWDk8sYCBVElKLMDI3X-JRTzg"  # ⚠️ Замените на новый токен!
 ADMIN_ID = 8329841937  # Только вы видите статистику
 
 import sqlite3
