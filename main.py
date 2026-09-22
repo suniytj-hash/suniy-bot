@@ -27,7 +27,7 @@ logging.basicConfig(
 )
 
 # ⚠️ ЗАМЕНИТЬ ТОЛЬКО ЭТО
-BOT_TOKEN = "8522249623:AAFJ9TFhtYN2b99Bm0t_fDIrRQVTc4uG2Cg"
+BOT_TOKEN = "8522249623:AAHTP6Gv_JN4CKITalhkwh6RSWCd1X0ci0o"
 
 ADMIN_ID = 8329841937
 
