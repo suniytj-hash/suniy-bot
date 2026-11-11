@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 """
-SUNIY TJ ACADEMY — Telegram Bot
+SUNIY TJ ACADEMY — Telegram Bot v5
 """
 
 import logging
-import sqlite3
-
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
@@ -16,71 +14,40 @@ from telegram.ext import (
     filters,
 )
 
+logging.basicConfig(level=logging.INFO)
 
-# =========================================================
-# НАСТРОЙКИ
-# =========================================================
+BOT_TOKEN = "8522249623:AAFDqVEEHtjyZxKCBKi1qFMxAyijnGtK-VU"  # ⚠️ Замените на новый токен!
+ADMIN_ID = 8329841937  # Только вы видите статистику
 
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO,
-)
+import sqlite3
+import os
 
-# ⚠️ ЗАМЕНИТЬ ТОЛЬКО ЭТО
-BOT_TOKEN = "8522249623:AAHTP6Gv_JN4CKITalhkwh6RSWCd1X0ci0o"
-
-ADMIN_ID = 8329841937
-
-DB_PATH = "users.db"
-
-
-# =========================================================
-# БАЗА ДАННЫХ
-# =========================================================
+# База данных SQLite
+DB_PATH = os.getenv("DB_PATH", "users.db")
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)
-    conn.execute(
-        "CREATE TABLE IF NOT EXISTS users "
-        "(user_id INTEGER PRIMARY KEY)"
-    )
+    conn.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY)")
     conn.commit()
     conn.close()
-
 
 def add_user(user_id):
     conn = sqlite3.connect(DB_PATH)
-    conn.execute(
-        "INSERT OR IGNORE INTO users (user_id) VALUES (?)",
-        (user_id,),
-    )
+    conn.execute("INSERT OR IGNORE INTO users (user_id) VALUES (?)", (user_id,))
     conn.commit()
     conn.close()
 
-
 def get_all_users():
     conn = sqlite3.connect(DB_PATH)
-    rows = conn.execute(
-        "SELECT user_id FROM users"
-    ).fetchall()
+    rows = conn.execute("SELECT user_id FROM users").fetchall()
     conn.close()
-
     return [row[0] for row in rows]
-
 
 def get_user_count():
     conn = sqlite3.connect(DB_PATH)
-    count = conn.execute(
-        "SELECT COUNT(*) FROM users"
-    ).fetchone()[0]
+    count = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
     conn.close()
-
     return count
-
-
-# =========================================================
-# ТЕКСТЫ
-# =========================================================
 
 WELCOME = """👋 Хуш омадед ба SUNIY TJ ACADEMY!
 
@@ -92,7 +59,6 @@ WELCOME = """👋 Хуш омадед ба SUNIY TJ ACADEMY!
 • Ивази чеҳра • Мини сериал
 
 👇 Барои гирифтани маълумоти пурра яке аз бахшҳоро интихоб намоед..."""
-
 
 ABOUT = """🚀 КУРСИ ЗЕҲНИ СУНЪӢ | SUNIY TJ ACADEMY
 
@@ -121,7 +87,6 @@ ABOUT = """🚀 КУРСИ ЗЕҲНИ СУНЪӢ | SUNIY TJ ACADEMY
 
 🎁 Пас аз харид дастрасии доимӣ ба курс дода мешавад."""
 
-
 PROGRAM = """📚 БАРНОМАИ КУРС
 
 📖 Дарси 0 — Шиносоӣ бо курс
@@ -147,9 +112,7 @@ PROGRAM = """📚 БАРНОМАИ КУРС
 📖 Дарси 20 — 🔒 Дарси махфӣ
 
 ━━━━━━━━━━━━━━
-
 🎁 Ва боз дарсҳои нав дар оянда илова мешаванд..."""
-
 
 REVIEWS = """⭐ ФИКРИ ШОГИРДОН
 
@@ -186,7 +149,6 @@ REVIEWS = """⭐ ФИКРИ ШОГИРДОН
 Аз ҳама бештар дарсҳои инфографика ва реклама ба ман писанд омаданд.
 Ташаккур ба SUNIY TJ ACADEMY 🙌"""
 
-
 RESULTS = """🎬 НАТИҶАҲО ВА МИСОЛҲО
 
 Дар ин ҷо метавонед натиҷаҳо, корҳои омодашуда ва пешрафти шогирдони моро бинед.
@@ -208,16 +170,16 @@ RESULTS = """🎬 НАТИҶАҲО ВА МИСОЛҲО
 
 🔥 Бисёре аз шогирдон баъди курс барои худ контент ва видеоҳои касбӣ месозанд."""
 
-
 TARIFFS = """💰 ТАРИФҲО
 
 Лутфан тарифи лозимаро интихоб намоед:
 
-🥉 STANDARD — 199 сомонӣ
-👑 VIP — 399 сомонӣ"""
+🥉 STANDARD — 249 сомонӣ
+👑 VIP — 549 сомонӣ 🔥 Беҳтарин интихоб
 
+💡 Фарқи нарх танҳо 300 сомонӣ — аммо бо VIP шумо кӯмаки шахсӣ, машварат, гурӯҳи VIP ва бонусҳо мегиред."""
 
-STANDARD = """🥉 ТАРИФИ STANDARD — 199 СОМОНӢ
+STANDARD = """🥉 ТАРИФИ STANDARD — 249 СОМОНӢ
 
 Ба тариф дохил мешавад:
 
@@ -236,12 +198,11 @@ STANDARD = """🥉 ТАРИФИ STANDARD — 199 СОМОНӢ
 
 ━━━━━━━━━━━━━━
 
-💰 Нарх: 199 сомонӣ
+💰 Нарх: 249 сомонӣ
 📚 Дастрасии доимӣ ба курс
 📱 Дарсҳо онлайн дар Telegram"""
 
-
-VIP = """👑 ТАРИФИ VIP — 399 СОМОНӢ
+VIP = """👑 ТАРИФИ VIP — 549 СОМОНӢ
 
 Ба тариф дохил мешавад:
 
@@ -269,15 +230,14 @@ VIP = """👑 ТАРИФИ VIP — 399 СОМОНӢ
 
 ━━━━━━━━━━━━━━
 
-💰 Нарх: 399 сомонӣ
+💰 Нарх: 549 сомонӣ
 📚 Дастрасии доимӣ ба курс
 📱 Дарсҳо онлайн дар Telegram
 👨‍💻 Дастгирии шахсӣ аз ҷониби маъмур"""
 
-
 BUY = """💳 ХАРИДИ КУРС
 
-🥉 STANDARD — 199 сомонӣ
+🥉 STANDARD — 249 сомонӣ
 
 ✅ Ҳамаи дарсҳо
 ✅ Дастрасии доимӣ
@@ -285,7 +245,7 @@ BUY = """💳 ХАРИДИ КУРС
 
 ━━━━━━━━━━━━━━
 
-👑 VIP — 399 сомонӣ
+👑 VIP — 549 сомонӣ  🔥 БЕҲТАРИН ИНТИХОБ
 
 ✅ Ҳамаи дарсҳо
 ✅ Дастрасии доимӣ
@@ -302,31 +262,7 @@ BUY = """💳 ХАРИДИ КУРС
 
 ✅ Баъди тасдиқи пардохт дастрасӣ ба курс дода мешавад."""
 
-
-PAYMENT_STANDARD = """💳 ПАРДОХТИ STANDARD — 199 сомонӣ
-
-━━━━━━━━━━━━━━
-
-🏦 Душанбе Сити
-📱 900 779 222
-👤 Ба номи: ПАРВИНА М.
-
-━━━━━━━━━━━━━━
-
-🏦 Алиф Бонк
-💳 4444 8844 1014 0902
-👤 Ба номи: Ш. Ҷ.
-
-━━━━━━━━━━━━━━
-
-📩 Пас аз пардохт чек ё скриншоти пардохтро ба Telegram фиристед:
-📲 @suniy_tj
-
-✅ Пас аз тасдиқи пардохт дастрасӣ ба курс дода мешавад.
-🤝 Ташаккур барои боварӣ ба SUNIY TJ ACADEMY."""
-
-
-PAYMENT_VIP = """💳 ПАРДОХТИ VIP — 399 сомонӣ
+PAYMENT_STANDARD = """💳 ПАРДОХТИ STANDARD — 249 сомонӣ
 
 ━━━━━━━━━━━━━━
 
@@ -348,6 +284,27 @@ PAYMENT_VIP = """💳 ПАРДОХТИ VIP — 399 сомонӣ
 ✅ Пас аз тасдиқи пардохт дастрасӣ ба курс дода мешавад.
 🤝 Ташаккур барои боварӣ ба SUNIY TJ ACADEMY."""
 
+PAYMENT_VIP = """💳 ПАРДОХТИ VIP — 549 сомонӣ
+
+━━━━━━━━━━━━━━
+
+🏦 Душанбе Сити
+📱 900 779 222
+👤 Ба номи: ПАРВИНА М.
+
+━━━━━━━━━━━━━━
+
+🏦 Алиф Бонк
+💳 4444 8844 1014 0902
+👤 Ба номи: Ш. Ҷ.
+
+━━━━━━━━━━━━━━
+
+📩 Пас аз пардохт чек ё скриншоти пардохтро ба Telegram фиристед:
+📲 @suniy_tj
+
+✅ Пас аз тасдиқи пардохт дастрасӣ ба курс дода мешавад.
+🤝 Ташаккур барои боварӣ ба SUNIY TJ ACADEMY."""
 
 CONTACT = """📞 ТАМОС БО МО
 
@@ -377,498 +334,162 @@ VPN = """🇹🇯 VPN-и ватанӣ
 
 🔗 https://t.me/WebSafeTelbot?start=ref_ODMyOTg0MTkzNy4wDly57ogZbQ"""
 
-
-# =========================================================
-# КЛАВИАТУРЫ
-# =========================================================
+# ===================== КЛАВИАТУРЫ =====================
 
 def main_menu():
     return InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "🎓 Дар бораи курс",
-                callback_data="about"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "💰 Тарифҳо",
-                callback_data="tariffs"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "📚 Барномаи курс",
-                callback_data="program"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "🎬 Натиҷаҳо ва мисолҳо",
-                callback_data="results"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "⭐ Фикри шогирдон",
-                callback_data="reviews"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "🧾 Харид кардан",
-                callback_data="buy"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "🇹🇯 VPN-и ватанӣ",
-                callback_data="vpn"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "📞 Тамос бо маъмур",
-                callback_data="contact"
-            )
-        ],
+        [InlineKeyboardButton("🔥 Харид кардан", callback_data="buy")],
+        [InlineKeyboardButton("🎓 Дар бораи курс", callback_data="about")],
+        [InlineKeyboardButton("💰 Тарифҳо", callback_data="tariffs")],
+        [InlineKeyboardButton("📚 Барномаи курс", callback_data="program")],
+        [InlineKeyboardButton("🎬 Натиҷаҳо ва мисолҳо", callback_data="results")],
+        [InlineKeyboardButton("⭐ Фикри шогирдон", callback_data="reviews")],
+        [InlineKeyboardButton("🇹🇯 VPN-и ватанӣ", callback_data="vpn")],
+        [InlineKeyboardButton("📞 Тамос бо маъмур", callback_data="contact")],
     ])
-
 
 def back_menu():
     return InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "⬅️ Бозгашт",
-                callback_data="menu"
-            )
-        ]
+        [InlineKeyboardButton("⬅️ Бозгашт", callback_data="menu")]
     ])
 
+def buy_back_menu():
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("🔥 Харид кардан", callback_data="buy")],
+        [InlineKeyboardButton("⬅️ Бозгашт", callback_data="menu")],
+    ])
 
 def tariffs_menu():
     return InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "🥉 STANDARD — 199 сомонӣ",
-                callback_data="standard"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "👑 VIP — 399 сомонӣ",
-                callback_data="vip"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "⬅️ Бозгашт",
-                callback_data="menu"
-            )
-        ],
+        [InlineKeyboardButton("🥉 STANDARD — 249 сомонӣ", callback_data="standard")],
+        [InlineKeyboardButton("👑 VIP — 549 сомонӣ 🔥 Беҳтарин", callback_data="vip")],
+        [InlineKeyboardButton("⬅️ Бозгашт", callback_data="menu")],
     ])
-
 
 def buy_menu():
     return InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "🥉 STANDARD — 199 сомонӣ",
-                callback_data="pay_standard"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "👑 VIP — 399 сомонӣ",
-                callback_data="pay_vip"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "⬅️ Бозгашт",
-                callback_data="menu"
-            )
-        ],
+        [InlineKeyboardButton("👑 VIP — 549 сомонӣ 🔥 Беҳтарин", callback_data="pay_vip")],
+        [InlineKeyboardButton("🥉 STANDARD — 249 сомонӣ", callback_data="pay_standard")],
+        [InlineKeyboardButton("⬅️ Бозгашт", callback_data="menu")],
     ])
-
 
 def reviews_menu():
     return InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "📸 Натиҷаҳо дар Instagram",
-                url="https://www.instagram.com/suniy.tj"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "⬅️ Бозгашт",
-                callback_data="menu"
-            )
-        ],
+        [InlineKeyboardButton("📸 Натиҷаҳо дар Instagram", url="https://www.instagram.com/suniy.tj")],
+        [InlineKeyboardButton("🔥 Харид кардан", callback_data="buy")],
+        [InlineKeyboardButton("⬅️ Бозгашт", callback_data="menu")],
     ])
-
 
 def results_menu():
     return InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "📸 Instagram @suniy.tj",
-                url="https://www.instagram.com/suniy.tj"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "⬅️ Бозгашт",
-                callback_data="menu"
-            )
-        ],
+        [InlineKeyboardButton("📸 Instagram @suniy.tj", url="https://www.instagram.com/suniy.tj")],
+        [InlineKeyboardButton("🔥 Харид кардан", callback_data="buy")],
+        [InlineKeyboardButton("⬅️ Бозгашт", callback_data="menu")],
     ])
-
 
 def contact_menu():
     return InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "💬 WhatsApp",
-                url="https://wa.me/992900779222"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "📲 Telegram @suniy_tj",
-                url="https://t.me/suniy_tj"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "📸 Instagram @suniy.tj",
-                url="https://www.instagram.com/suniy.tj"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "⬅️ Бозгашт",
-                callback_data="menu"
-            )
-        ],
+        [InlineKeyboardButton("💬 WhatsApp", url="https://wa.me/992900779222")],
+        [InlineKeyboardButton("📲 Telegram @suniy_tj", url="https://t.me/suniy_tj")],
+        [InlineKeyboardButton("📸 Instagram @suniy.tj", url="https://www.instagram.com/suniy.tj")],
+        [InlineKeyboardButton("⬅️ Бозгашт", callback_data="menu")],
     ])
-
 
 def standard_menu():
     return InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "💳 Харид кардан",
-                callback_data="pay_standard"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "⬅️ Бозгашт",
-                callback_data="tariffs"
-            )
-        ],
+        [InlineKeyboardButton("💳 Харид кардан", callback_data="pay_standard")],
+        [InlineKeyboardButton("⬅️ Бозгашт", callback_data="tariffs")],
     ])
-
 
 def vip_menu():
     return InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "💳 Харид кардан",
-                callback_data="pay_vip"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "⬅️ Бозгашт",
-                callback_data="tariffs"
-            )
-        ],
+        [InlineKeyboardButton("💳 Харид кардан", callback_data="pay_vip")],
+        [InlineKeyboardButton("⬅️ Бозгашт", callback_data="tariffs")],
     ])
-
 
 def pay_menu(back):
     return InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "📲 Ба @suniy_tj нависед",
-                url="https://t.me/suniy_tj"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "⬅️ Бозгашт",
-                callback_data=back
-            )
-        ],
+        [InlineKeyboardButton("📲 Ба @suniy_tj нависед", url="https://t.me/suniy_tj")],
+        [InlineKeyboardButton("⬅️ Бозгашт", callback_data=back)],
     ])
 
+# ===================== ХЕНДЛЕРЫ =====================
 
-# =========================================================
-# /START
-# =========================================================
-
-async def start(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     add_user(user_id)
+    await update.message.reply_text(WELCOME, reply_markup=main_menu())
 
-    await update.message.reply_text(
-        WELCOME,
-        reply_markup=main_menu()
-    )
-
-
-# =========================================================
-# СТАТИСТИКА
-# =========================================================
-
-async def stats(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
+async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
         return
+    await update.message.reply_text(f"👥 Ҷамъи корбарон: {get_user_count()} нафар")
 
-    await update.message.reply_text(
-        f"👥 Ҷамъи корбарон: {get_user_count()} нафар"
-    )
-
-
-# =========================================================
-# INLINE-КНОПКИ
-# =========================================================
-
-async def button_handler(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-
-    logging.info(
-        "BUTTON RECEIVED: user=%s data=%s",
-        update.effective_user.id,
-        query.data,
-    )
-
     await query.answer()
-
     data = query.data
 
     texts = {
-        "menu": (
-            WELCOME,
-            main_menu()
-        ),
-        "about": (
-            ABOUT,
-            back_menu()
-        ),
-        "program": (
-            PROGRAM,
-            back_menu()
-        ),
-        "results": (
-            RESULTS,
-            results_menu()
-        ),
-        "reviews": (
-            REVIEWS,
-            reviews_menu()
-        ),
-        "tariffs": (
-            TARIFFS,
-            tariffs_menu()
-        ),
-        "standard": (
-            STANDARD,
-            standard_menu()
-        ),
-        "vip": (
-            VIP,
-            vip_menu()
-        ),
-        "buy": (
-            BUY,
-            buy_menu()
-        ),
-        "pay_standard": (
-            PAYMENT_STANDARD,
-            pay_menu("standard")
-        ),
-        "pay_vip": (
-            PAYMENT_VIP,
-            pay_menu("vip")
-        ),
-        "contact": (
-            CONTACT,
-            contact_menu()
-        ),
-        "vpn": (
-            VPN,
-            back_menu()
-        ),
+        "menu": (WELCOME, main_menu()),
+        "about": (ABOUT, buy_back_menu()),
+        "program": (PROGRAM, buy_back_menu()),
+        "results": (RESULTS, results_menu()),
+        "reviews": (REVIEWS, reviews_menu()),
+        "tariffs": (TARIFFS, tariffs_menu()),
+        "standard": (STANDARD, standard_menu()),
+        "vip": (VIP, vip_menu()),
+        "buy": (BUY, buy_menu()),
+        "pay_standard": (PAYMENT_STANDARD, pay_menu("standard")),
+        "pay_vip": (PAYMENT_VIP, pay_menu("vip")),
+        "contact": (CONTACT, contact_menu()),
+        "vpn": (VPN, back_menu()),
     }
 
-    if data not in texts:
-        logging.warning(
-            "UNKNOWN CALLBACK: %s",
-            data
-        )
-        return
-
-    text, keyboard = texts[data]
-
-    try:
-        await query.edit_message_text(
-            text=text,
-            reply_markup=keyboard
-        )
-
-    except Exception as e:
-        logging.exception(
-            "BUTTON ERROR: %s",
-            e
-        )
+    if data in texts:
+        text, keyboard = texts[data]
+        await query.message.reply_text(text, reply_markup=keyboard)
+        try:
+            await query.message.delete()
+        except Exception:
+            pass
 
 
-# =========================================================
-# РАССЫЛКА
-# =========================================================
-
-async def broadcast(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
+async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
         return
-
     if not context.args:
-        await update.message.reply_text(
-            "❌ Напишите текст!\n\n"
-            "Пример:\n"
-            "/broadcast Ваш текст"
-        )
+        await update.message.reply_text("❌ Напишите текст! Пример:\n/broadcast Ваш текст")
         return
-
-    text = " ".join(context.args)
-
+    parts = update.message.text.split(None, 1)
+    text = parts[1] if len(parts) > 1 else ""
     success = 0
     fail = 0
-
     for user_id in get_all_users():
         try:
-            await context.bot.send_message(
-                chat_id=user_id,
-                text=text
-            )
+            await context.bot.send_message(chat_id=user_id, text=text)
             success += 1
-
         except Exception:
             fail += 1
+    await update.message.reply_text(f"✅ Отправлено: {success} нафар\n❌ Не доставлено: {fail} нафар")
 
-    await update.message.reply_text(
-        f"✅ Отправлено: {success} нафар\n"
-        f"❌ Не доставлено: {fail} нафар"
-    )
-
-
-# =========================================================
-# ОБЫЧНЫЕ СООБЩЕНИЯ
-# =========================================================
-
-async def unknown(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
+async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     add_user(user_id)
+    await update.message.reply_text(WELCOME, reply_markup=main_menu())
 
-    await update.message.reply_text(
-        WELCOME,
-        reply_markup=main_menu()
-    )
-
-
-# =========================================================
-# ОШИБКИ
-# =========================================================
-
-async def error_handler(
-    update: object,
-    context: ContextTypes.DEFAULT_TYPE
-):
-    logging.error(
-        "Ошибка при обработке Telegram Update",
-        exc_info=context.error
-    )
-
-
-# =========================================================
-# ЗАПУСК
-# =========================================================
+# ===================== ЗАПУСК =====================
 
 def main():
-
     init_db()
-
-    app = (
-        Application.builder()
-        .token(BOT_TOKEN)
-        .build()
-    )
-
-    app.add_handler(
-        CommandHandler(
-            "start",
-            start
-        )
-    )
-
-    app.add_handler(
-        CommandHandler(
-            "stats",
-            stats
-        )
-    )
-
-    app.add_handler(
-        CommandHandler(
-            "broadcast",
-            broadcast
-        )
-    )
-
-    app.add_handler(
-        CallbackQueryHandler(
-            button_handler
-        )
-    )
-
-    app.add_handler(
-        MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            unknown
-        )
-    )
-
-    app.add_error_handler(
-        error_handler
-    )
-
-    logging.info(
-        "SUNIY TJ ACADEMY BOT STARTED"
-    )
-
-    app.run_polling(
-        allowed_updates=Update.ALL_TYPES,
-        drop_pending_updates=True
-    )
-
+    app = Application.builder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("stats", stats))
+    app.add_handler(CommandHandler("broadcast", broadcast))
+    app.add_handler(CallbackQueryHandler(button_handler))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, unknown))
+    print("✅ Бот SUNIY TJ ACADEMY запущен!")
+    app.run_polling()
 
 if __name__ == "__main__":
     main()
